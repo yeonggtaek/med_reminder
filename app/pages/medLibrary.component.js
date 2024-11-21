@@ -81,7 +81,7 @@ const ArchiveModal = ({ open, close, actionWord, onPress, description }) => {
   );
 };
 
-const MedButton = ({ index, med, onPress, handleArchive, handleDelete }) => {
+const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) => {
   const [showArchiveBottomModal, setShowArchiveBottomModal] = useState(false);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const toggleArchiveBottomModal = () => {
@@ -91,7 +91,8 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete }) => {
   const description = med.isArchive
     ? "Are you sure you want to delete this medication from the archive?"
     : "This medication will be marked as inactive and stored in the archive for future reference.";
-    
+    const medication = route.params.medication;
+  
   return (
     <>
       <Modal
@@ -120,7 +121,8 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete }) => {
             style={{ marginBottom: 32, paddingHorizontal: 32 }}
             category="h2"
           >
-            {med.icon} {med.name}
+            <View>{medication.icon}</View>
+           {med.name}
           </Text>
           <Button
             size="giant"
