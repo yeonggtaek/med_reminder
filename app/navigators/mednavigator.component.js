@@ -11,9 +11,10 @@ import { NextDose } from "@/app/pages/addMed/nextdose.component"
 import { TimeDose } from "@/app/pages/addMed/timenextdose.component"
 import { Onboarding } from '../pages/home.component';
 import { SetDuration } from "@/app/pages/addMed/duration.component"
+import { ScheduleDose } from "@/app/pages/addMed/time.component"
 
 import { FormScreen } from "@/app/pages/new-hifi/FormScreen"
-import { EditIcon, EditName, EditSchedule, EditFrequency, EditDuration } from "@/app/pages/new-hifi/EditScreens"
+import { EditIcon, EditName, EditSchedule, EditFrequency, EditDuration, EditDose, EditStrength, EditNickname } from "@/app/pages/new-hifi/EditScreens"
 
 
 const Stack = createStackNavigator();
@@ -31,7 +32,7 @@ export const MedNavigator = () => {
       <Stack.Screen name='Extra Options' component={ExtraOptions} options={{headerShown: false}}/>
       <Stack.Screen name='Icon Pick' component={IconPick} options={{headerShown: false}}/>
       <Stack.Screen name='Med Confirm' component={MedConfirm} options={{headerShown: false}}/>
-    
+
       <Stack.Screen name="Confirm Scan" component={ConfirmScan} options={{headerShown: false}}/>
 
       <Stack.Screen name="Edit Name" component={EditScreen} initialParams={{fromManual: false}} options={{headerShown: false}}/>
@@ -49,10 +50,13 @@ export const MedNavigator = () => {
 
       <Stack.Screen name="Form" component={FormScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Edit Name" component={EditName} options={{headerShown: false}}/>
+      <Stack.Screen name="Edit Nickname" component={EditNickname} options={{headerShown: false}}/>
       <Stack.Screen name="Edit Schedule" component={EditSchedule} options={{headerShown: false}}/>
       <Stack.Screen name="Edit Frequency" component={EditFrequency} options={{headerShown: false}}/>
       <Stack.Screen name="Edit Duration" component={EditDuration} options={{headerShown: false}}/>
       <Stack.Screen name="Edit Icon" component={EditIcon} options={{headerShown: false}}/>
-    </Stack.Navigator>
+      <Stack.Screen name="Edit Dose" component={EditDose} options={{headerShown: false}}/>
+      <Stack.Screen name="Edit Strength" component={EditStrength} options={{headerShown: false}}/>
+      </Stack.Navigator>
   )
 }

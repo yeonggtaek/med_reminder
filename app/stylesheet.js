@@ -9,10 +9,15 @@ export const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginVertical: 16,
-        width: "100%"
+        width: "99%",
     },
     container: {
         width: "100%"
+    },
+    greenButton: {
+        backgroundColor: colorTheme["green"],
+        width: "100%",
+        borderRadius: 16
     },
     orangeButton: {
         backgroundColor: colorTheme["hunyadi-yellow"],

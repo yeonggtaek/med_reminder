@@ -15,6 +15,7 @@ import {
   Card
 } from "@ui-kitten/components";
 import { Header } from "@/app/components/header";
+import ViewMoreText from 'react-native-view-more-text'
 
 import { default as colorTheme } from "@/custom-theme.json";
 import { styles } from "@/app/stylesheet";
@@ -62,7 +63,7 @@ const ArchiveModal = ({ open, close, actionWord, onPress, description }) => {
               borderColor: colorTheme["hunyadi-yellow"],
               borderRadius: 16,
             }}
-            children={() => <Text category="h2">cancel</Text>}
+            children={() => <Text category="h2">Cancel</Text>}
           />
           <Button
             size="small"
@@ -81,7 +82,7 @@ const ArchiveModal = ({ open, close, actionWord, onPress, description }) => {
   );
 };
 
-const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) => {
+const MedButton = ({ index, med, onPress, handleArchive, handleDelete, icon }) => {
   const [showArchiveBottomModal, setShowArchiveBottomModal] = useState(false);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const toggleArchiveBottomModal = () => {
@@ -91,8 +92,7 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) 
   const description = med.isArchive
     ? "Are you sure you want to delete this medication from the archive?"
     : "This medication will be marked as inactive and stored in the archive for future reference.";
-    const medication = route.params.medication;
-  
+
   return (
     <>
       <Modal
@@ -121,8 +121,7 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) 
             style={{ marginBottom: 32, paddingHorizontal: 32 }}
             category="h2"
           >
-            <View>{medication.icon}</View>
-           {med.name}
+            {med.name}
           </Text>
           <Button
             size="giant"
@@ -155,6 +154,7 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) 
             ? colorTheme["hunyadi-yellow"]
             : colorTheme["light-blue"],
           ...styles.invisBorder,
+          boxShadow : "1px 3px 6px 0px rgba(0, 0, 0, 0.10)"
         }}
         key={index}
         children={() => (
@@ -162,12 +162,38 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) 
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              width: "90%",
+              width: "100%",
+              paddingVertical: 10,  
+              paddingHorizontal: 15,
+              padding: 10,
+              borderRadius: 15,
+            }}
+          > 
+            <View
+            style={{
+              backgroundColor: colorTheme["white"],
+              borderRadius: 50,
+              width: 65,  
+              height: 65,
               alignItems: "center",
             }}
-          >
-            {/* <Image source={med.icon} /> */}
-            <Text category="h2">{med.name}</Text>
+            ><View>
+            <Image source={med.icon} style={{
+              width: 40, 
+              height: 40,
+              marginTop: 10
+            }}/>
+          </View>
+        </View>
+        <View style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "90%",
+              alignItems: "center",
+              paddingVertical: 10,  
+              paddingHorizontal: 25,
+            }}>
+            <Text style={{fontSize: 20, fontFamily: "Poppins-SemiBold"}}>{med.name}</Text>
             <Text
               style={{ fontWeight: "bold" }}
               onPress={() => {
@@ -175,7 +201,8 @@ const MedButton = ({ index, med, onPress, handleArchive, handleDelete, route }) 
               }}
             >
             </Text>
-          </View>
+            </View>
+            </View>
         )}
       />
     </>
@@ -188,16 +215,13 @@ export const MedFolder = ({ navigation }) => {
   const [selectedTab, setSelectedTab] = useState(1);
 
   function handleSwitch(value) {
-    if (value) {
-      setData(LIBRARY_DATA.filter((data) => !data.isArchive));
-    } else {
-      setData(LIBRARY_DATA.filter((data) => data.isArchive));
-    }
+
     setSelectedTab(value);
   }
 
   const TabSwitch = () => {
     return (
+      <View style={{ backgroundColor: colorTheme["silver-white"]}}>
       <View style={{ flexDirection: "row", gap: 0, }}>
         <Text
           onPress={() => handleSwitch(1)}
@@ -205,15 +229,17 @@ export const MedFolder = ({ navigation }) => {
             flex: 1,
             backgroundColor:
               selectedTab === 1 ? colorTheme["green"] : "#fff",
-            borderColor: "green",
+            borderColor: "#DEDEDE",
             textAlign: "center",
             border: `solid ${colorTheme["green"]} 3`,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             height: 64,
             lineHeight: 64,
+            borderWidth: 0.5,
             color:
-              selectedTab === 1 ? colorTheme["white"] : "black",
+              selectedTab === 1 ? colorTheme["white"] : "#6E6E6E",
+            fontFamily: selectedTab === 1 ? "PublicSans-Bold" : "PublicSans-Regular",
           }}
         >
           Current
@@ -224,8 +250,8 @@ export const MedFolder = ({ navigation }) => {
             flex: 1,
             backgroundColor:
               selectedTab === 1 ? "#fff" : colorTheme["green"],
-            borderColor: colorTheme["green"],
             textAlign: "center",
+            borderColor: "#DEDEDE",
             border: `solid ${colorTheme["green"]} 3`,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
@@ -234,11 +260,14 @@ export const MedFolder = ({ navigation }) => {
             height: 64,
             lineHeight: 64,
             color:
-              selectedTab === 1 ? colorTheme["black"] : "white",
+              selectedTab === 1 ? "#6E6E6E" : "white",
+              borderWidth: 0.5,
+            fontFamily: selectedTab === 1 ? "PublicSans-Regular" : "PublicSans-Bold",
           }}
         >
           Archive
         </Text>
+      </View>
       </View>
     );
   };
@@ -249,15 +278,16 @@ export const MedFolder = ({ navigation }) => {
   const handleArchive = (med) => {
     setData((prev) => {
       const newData = prev.map((m) => {
-        if (m.name === med.name) {
-          m.isArchive = true;
+        const c = {...m}
+        if(m.name === med.name) {
+        c.isArchive = true;
         }
-        return m;
+        return c;
       });
-      return newData.filter((m) => !m.isArchive);
+      return newData
     });
   };
-
+  
   return (
     <View style={{backgroundColor: colorTheme["white"], flex: 1}}>
       <TabSwitch />
@@ -268,11 +298,18 @@ export const MedFolder = ({ navigation }) => {
             gap: 16,
           }}
         >
-          {data.map((med, index) => (
+          {data.filter((med)=> {
+            if(selectedTab === 1) {
+              return !med.isArchive
+            } else {
+              return med.isArchive === true
+            }
+          }).map((med, index) => (
             <MedButton
               key={med.name}
               med={med}
               index={index}
+              icon={med.icon}
               onPress={() =>
                 navigation.navigate("Med Detail", {
                   medication: med,
@@ -294,12 +331,12 @@ export const MedDescription = ({ navigation, route }) => {
   const BackAction = () => (
     <TopNavigationAction
       onPress={() => navigation.goBack()}
-      icon={(props) => <Icon style={{color: "white"}}{...props} name="arrow-back" />}
+      icon={(props) => <Icon {...props} name="arrow-ios-back-outline" fill="#ffffff" style={{width: 45, height: 45}} />}
       style={{
         width: "100%",
         Color: colorTheme["white"],
-        paddingVertical: 32,
-        paddingHorizontal: 24,
+        paddingVertical: 40,
+        paddingHorizontal: 8,
       }}
     />
   );
@@ -307,26 +344,27 @@ export const MedDescription = ({ navigation, route }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colorTheme["green"] }}>
       <BackAction/>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16 }}>
-        <Text style={{ color: "white", marginBottom: 10 }}>
+      <View style={{ alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <Text style={{ fontSize: 26, fontFamily: "Poppins-SemiBold", color: colorTheme["silver-white"]}}>
         {medication.name}, {medication.refills}
         </Text>
-        <Text style={{ color: "white", marginBottom: 10 }}>
+        <Text style={{ fontSize: 16, fontFamily: "PublicSans-Regular", color: "white", marginTop: 20, textAlign: "center"}}>
         {medication.directions}
         </Text>
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 30 }}>
-          {medication.icon}
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 30, marginTop: 30 }}>
+          <Image source={medication.icon} style={{width: 180, height: 180}}/>
         </View>
-        <Text style={{ color: "white", marginBottom: 8 }}>
-          description
+        <Text style={{ fontSize: 16, fontFamily: "PublicSans-Bold", color: "white", marginTop: 5, marginBottom: 8, marginRight: 212 }}>
+        Description
         </Text>
-        <Text style={{ color: "white", marginBottom: 20, justifyContent: 'center', alignItems: "center" }}>{medication.description}</Text>
+        <Text style={{ fontSize: 14, fontFamily: "PublicSans-Regular", color: "white", marginBottom: 20, justifyContent: 'center', alignItems: "center", width: 300, height: 100 }}>{medication.description}</Text>
         <Button
           style={{
             backgroundColor: colorTheme["green"],
             borderColor: colorTheme["white"],
-            borderRadius: 10,
+            borderRadius: 20,
             width: "80%",
+            borderWidth: 3
           }}
           onPress={() => navigation.navigate("Info", {
             medication: medication,
@@ -358,24 +396,35 @@ export const InfoScreen = ({ navigation, route }) => {
     setShowArchiveModal(true);
   };
 
-  const medHeader = (props: ViewProps): React.ReactElement => (
+  const medHeader = (props) => (
     <View {...props} style={{ flexDirection: "row", gap: 10, alignItems: "center", padding: 10, borderRadius: 15 }}>
       <View
         style={{
+          marginTop: 10,
+          marginBottom:10,
           backgroundColor: colorTheme["green"],
-          borderRadius: 50,
+          borderRadius: "50%",
           justifyContent: "center",
           alignItems: "center",
           padding: 10,
+          width: 50,
+          height: 50,
+          marginLeft: 10,
+          marginBottom: 65
         }}
       >
-        {React.cloneElement(medication.icon, { ...medication.icon.props, style: { ...medication.icon.props.style, width: 30, height: 30 } })}
+        <View>
+        <Image
+          source={medication.icon}
+          style={{ width: 35, height: 35, marginBottom: 65, marginTop: 65}}
+        /> 
+        </View>
       </View>
-      <View style={{ flexDirection: "column", flex: 1, marginLeft: 10 }}>
-        <Text category='h6'>
+      <View style={{ flexDirection: "column", flex: 1, marginright: 20 }}>
+        <Text style={{ fontSize: 16, fontFamily: "PublicSans-SemiBold", color: colorTheme["text-off-black"]}}>
           {medication.name}, {medication.refills} units
         </Text>
-        <Text category='h10' appearance='hint' style={{ color: "gray"}}>
+        <Text style={{ fontSize: 14, fontFamily: "PublicSans-SemiBold", color: colorTheme["text-gray"]}}>
           {medication.directions}
         </Text>
       </View>
@@ -388,15 +437,27 @@ export const InfoScreen = ({ navigation, route }) => {
   }
   style={{ position: "absolute", top: 10, right: 10 }}
 >
-  <Text style={{ color: colorTheme["green"] }}>Edit Info</Text>
+  <Text style={{ fontSize: 14, fontFamily: "PublicSans-Regular", color: colorTheme["green"], textDecorationLine: 'underline' }}>Edit Info</Text>
 </TouchableOpacity>
     </View>
   );
   
+  const [visible, setVisible] = useState(false);
+  const [directionsVisible, setDirectionsVisible] = useState(false);
+  const [fullText, setFullText] = useState('');
+
+  const renderViewMore = (onPress) => (
+    <TouchableOpacity onPress={() => {
+      setFullText('This is the full text to display in the overlay.');
+      setDirectionsVisible(true);
+    }}>
+      <Text category="s1" style={{ color: "white", marginTop: 20, textDecorationLine: 'underline' }}>View More</Text>
+    </TouchableOpacity>
+  );
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header navigation={navigation} />
-      <Layout style={styles.masterLayout}>
+      <Layout style={{...styles.masterLayout}}>
         <ArchiveModal
           open={showArchiveModal}
           close={() => setShowArchiveModal(false)}
@@ -413,49 +474,29 @@ export const InfoScreen = ({ navigation, route }) => {
           }}
           description={description}
         />
-        <ScrollView>
-          <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              gap: 12,
-              marginBottom: 60,
-            }}
-          >
-            <View style={{flexDirection: "row", alignItems:'center', textAlign: 'center', gap: 6}}>
-            <Text category='h6'>
-              Insulin <Text category='h6' style={{ color: colorTheme["green"] }}>{medication.name}</Text>
-            </Text>
+        <ScrollView style={{
+            width: "100%",
+            flexDirection: "column",
+            gap: 12,
+            marginBottom: 12, flex: 1
+          }}
+          contentContainerStyle={{justifyContent: "flex-start"}}
+        >
+            <View style={{flexDirection: "row", alignItems:'center', textAlign: 'center', marginLeft: 115}}>
+            <Text style={{fontSize: 22, fontFamily: "Poppins-SemiBold"}}>
+              Insulin <Text style={{ fontSize: 22, fontFamily: "Poppins-SemiBold", color: colorTheme["green"], }}>{medication.name}</Text>
+              </Text>
             </View>
-            {/* <View style={{flexDirection: "row", justifyContent: 'center', gap: 6}}>
-              <Button onPress={() => navigation.navigate("Med Stack", {screen: "Edit Reminder", medication: medication})}>Edit Reminder</Button>
-              <Button onPress={() => navigation.navigate("Med Stack", {screen: "Edit Info", medication: medication})}>Edit Info</Button>
-            </View> */}
-            {/* Medication Header */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              {/* <Image
-                source={medication.icon}
-                style={{ width: 40, height: 40, marginRight: 16 }}
-              /> */}
+            <View style={{ marginTop: 20}}>
+            <Card style={styles.card} header={medHeader}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <Text style={{ fontSize: 14, fontFamily: "Poppins-Medium", color: colorTheme["text-gray"]}}>Duration</Text>
+                <Text style={{ fontSize: 14, fontFamily: "Poppins-Medium", color: colorTheme["text-gray"]}}>Dose</Text>
+                <Text style={{ fontSize: 14, fontFamily: "Poppins-Medium", color: colorTheme["text-gray"]}}>Frequency</Text>      
+              </View>
+            </Card>
             </View>
-            <View style={{ flexDirection: "column", gap: 6 }}>
-  <Layout style={styles.topContainer} level="1">
-    <Card style={styles.card} header={medHeader}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-        <Text style={{ color: "gray" }}>Duration</Text>
-        <Text style={{ color: "gray" }}>Dose</Text>
-        <Text style={{ color: "gray" }}>Frequency</Text>
-      </View>
-    </Card>
-  </Layout>
-</View>
-            {/* Edit Buttons */}
+            {/* reminder part */}
             {/* <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
               <Button
                 onPress={() =>
@@ -492,13 +533,13 @@ export const InfoScreen = ({ navigation, route }) => {
                 Info
               </Button>
             </View> */}
-            <View style={{ flexDirection: "column", gap: 6 }}>
+            {/* <View style={{ flexDirection: "column", gap: 6 }}>
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
               >
-                <Icon style={{ width: 40 }} name="edit"></Icon>
-                <Text style={{ color: colorTheme["persian-green"] }}>
-                  Medication Info
+                <Icon style={{ width: 40 }} name="clock"></Icon>
+                <Text style={{ color: colorTheme["green"] }}>
+                  Reminder
                 </Text>
               </View>
               <View
@@ -506,30 +547,203 @@ export const InfoScreen = ({ navigation, route }) => {
                   backgroundColor: "#fff",
                   padding: 32,
                   borderRadius: 20,
-                  gap: 16,
                 }}
               >
-                <View>
-                  <Text style={{ color: colorTheme["persian-green"] }}>
-                    Description
-                  </Text>
-                  <Text>{medication.description}</Text>
-                </View>
-                <View>
-                  <Text style={{ color: colorTheme["persian-green"] }}>
+                <Text>{medication.reminder}</Text>
+              </View>
+            </View> */}
+
+            {/* <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+              >
+                <Icon style={{ width: 40 }} name="edit"></Icon>
+                <Text style={{ color: colorTheme["persian-green"] }}>
+                  Medication Info
+                </Text>
+              </View> */}
+              
+            
+            <View style={{ flexDirection: "row", gap: 6, marginTop: 20 }}>
+              
+              <View
+                style={{
+                  // backgroundColor: "#fff",
+                  borderRadius: 20,
+                  gap: 16,
+                  flexDirection: "row",
+                  width: "100%",
+                  justifyContent: "space-between"
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "column",
+                    backgroundColor: "#fff",
+                    padding: 20,
+                    borderRadius: 20,
+                    shadowColor: "#000", 
+                    shadowOffset: { width: 4, height: 4 }, 
+                    shadowOpacity: 0.25, 
+                    shadowRadius: 3.84, 
+                    elevation: 5,
+                    width: "35%"
+                  }}
+                >
+
+                  <Text
+                    style={{ color: colorTheme["persian-green"], fontSize: 28, fontFamily: "Poppins-SemiBold", marginBottom: 10 }}
+                  >
                     Side Effects
                   </Text>
+
+                  <ViewMoreText
+                    numberOfLines={3}
+                    renderViewMore={renderViewMore}
+                  >
+                    <View style={{ flexDirection: "column" }}>
+                      {medication.sideEffects.slice(0, 3).map((effect, index) => (
+                      <Text key={index} style={{ marginBottom: 5, fontFamily: "Poppins-SemiBold", fontSize: 14 }}>
+                        • {effect}
+                      </Text>
+                      ))}
+                    </View>
+
+                  </ViewMoreText>
+
+                  <Text 
+                    onPress={() => setVisible(true)}
+                    style={{ display: 'flex', marginTop: 20, textDecorationLine: 'underline', color: colorTheme["persian-green"]}}
+                    category="s1"
+                  >
+                    View more
+                  </Text>
+
+                <Modal
+                  visible={visible}
+                  backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                  onBackdropPress={() => setVisible(false)} 
+                >
+
+                <Card
+                  disabled={true}
+                  style={{
+                  width: 300,
+                  borderRadius: 20}}
+                >
+                  <Text style={{ marginBottom: 10, fontWeight: "bold",  }}>
+                    Side Effects
+                  </Text>
+
+
                   {medication.sideEffects.map((effect, index) => (
-                    <Text key={index}>• {effect}</Text>
+                    <Text key={index} style={{ marginBottom: 5 }}>
+                      • {effect}
+                    </Text>
                   ))}
-                </View>
-                <View>
-                  <Text style={{ color: colorTheme["persian-green"] }}>
+
+
+                  <Button
+                    style={{
+                      marginTop: 20,
+                      backgroundColor: colorTheme["persian-green"],
+                      borderColor: colorTheme["persian-green"],
+                    }}
+                    onPress={() => setVisible(false)}
+                  >
+                    Close
+                  </Button> 
+                </Card>
+
+                </Modal>
+              </View>
+
+              <View style={{ flexDirection: "column", width: "60%", gap: 20, paddingRight: 9 }}>    
+                <View
+                  style={{
+                    flexDirection: "column",
+                    backgroundColor: "#007972",
+                    padding: 20,
+                    borderRadius: 20,
+                    shadowColor: "#000", 
+                    shadowOffset: { width: 4, height: 4 }, 
+                    shadowOpacity: 0.25, 
+                    shadowRadius: 3.84, 
+                    elevation: 5,
+                  }}
+                >
+                  <Text
+                    style={{ color: colorTheme["persian-green"], fontWeight: "bold" }}
+                    onPress={() => setDirectionsVisible(true)}
+                    category="h2"
+                  >
                     Directions for Use
                   </Text>
-                  <Text>{medication.directions}</Text>
+
+                  <ViewMoreText
+                    numberOfLines={3}
+                    renderViewMore={renderViewMore}
+                  >
+                  <Text style={{ marginBottom: 10 }}>{medication.directions}</Text>
+                  </ViewMoreText>
+
                 </View>
+                  <Modal
+                    visible={directionsVisible}
+                    backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                    onBackdropPress={() => setDirectionsVisible(false)}
+                  >
+                    <Card 
+                      disabled={true}
+                      style={{
+                        width: 300,
+                        borderRadius: 20,
+                        backgroundColor: "#007972",
+                        borderWidth: 0
+                      }}
+                    >
+                      <Text style={{ marginBottom: 10, fontWeight: "bold", color: "#8FBAB3" }}>
+                        Directions for Use
+                      </Text>
+                      <Text style={{ marginBottom: 10, color: "#ffffff" }}>{medication.directions}</Text>
+                      <Button
+                        style={{
+                          marginTop: 20,
+                          backgroundColor: colorTheme["persian-green"],
+                          borderColor: colorTheme["persian-green"],
+                          }}
+                          onPress={() => setDirectionsVisible(false)}
+                      >
+                        Close
+                      </Button>
+                    </Card>
+
+                  </Modal>
+
                 <View
+                  style={{
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 6,
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    padding: 20,
+                    shadowColor: "#000", 
+                    shadowOffset: { width: 4, height: 4 }, 
+                    shadowOpacity: 0.25, 
+                    shadowRadius: 3.84, 
+                    elevation: 5,
+                  }}
+                >
+                  <Text style={{ color: "#8FBAB3" }}>
+                    Prescription Details
+                  </Text>
+                  <Text style={{ color: colorTheme["persian-green"], fontSize: 26 }}>{medication.quantity}</Text>
+                </View>
+                
+                </View>
+
+                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
@@ -537,12 +751,15 @@ export const InfoScreen = ({ navigation, route }) => {
                     gap: 6,
                   }}
                 >
+
+                  
                   <Text style={{ color: colorTheme["persian-green"] }}>
                     Drug Strength
                   </Text>
                   <Text>{medication.strength}</Text>
-                </View>
-                <View
+                </View> 
+
+                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
@@ -554,21 +771,12 @@ export const InfoScreen = ({ navigation, route }) => {
                     Dosage Type
                   </Text>
                   <Text>{medication.type}</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  <Text style={{ color: colorTheme["persian-green"] }}>
-                    Quantity Prescribed
-                  </Text>
-                  <Text>{medication.quantity}</Text>
-                </View>
-                <View
+                </View> 
+
+                
+
+                
+                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
@@ -580,7 +788,7 @@ export const InfoScreen = ({ navigation, route }) => {
                     Number of Refills
                   </Text>
                   <Text>{medication.refills}</Text>
-                </View>
+                </View> *
               </View>
             </View>
             <Button
@@ -590,10 +798,10 @@ export const InfoScreen = ({ navigation, route }) => {
                 backgroundColor: colorTheme["princeton-orange"],
                 borderColor: colorTheme["white"],
                 borderRadius: 20,
+                marginTop: 30
               }}
               children={() => <Text category="h2">{actionWord} This Med</Text>}
             />
-          </View>
         </ScrollView>
       </Layout>
     </SafeAreaView>
@@ -624,7 +832,7 @@ export const EditReminderScreen = ({ route, navigation }) => {
           <Icon style={{ width: 40 }} name="clock"></Icon>
           <Text>
             Lisinoprill
-            {/* {medication.name} */}
+            {medication.name}
           </Text>
           <View style={{ gap: 20, margin: 20 }}>
             <View>
@@ -740,7 +948,7 @@ export const EditInfoScreen = ({ navigation, route }) => {
           <Text>Edit medication Info</Text>
           <Text>
             Lisinoprill
-            {/* {medication.name} */}
+             {medication.name} 
           </Text>
           <View style={{ gap: 20, margin: 20 }}>
             <View>
@@ -840,14 +1048,13 @@ export const MedLibraryScreen = ({ navigation }) => {
         style={{
           ...styles.masterLayout,
           flex: "none",
-          backgroundColor: "white",
+          backgroundColor: colorTheme["silver-white"],
         }}
       >
         <View style={styles.rowContainer}>
-          <Text category="h1" style={{ color: colorTheme["persian-green"] }}>
-            Med Library
+          <Text style={{ fontSize: 22, marginTop: 30, fontFamily: "Poppins-SemiBold", color: colorTheme["text-off-black"], }}>
+            Medication <Text style={{ fontSize: 22, color: colorTheme["persian-green"], fontFamily: "Poppins-SemiBold" }}>Library</Text>
           </Text>
-          <Icon style={{ width: 40 }} name="settings-2-outline"></Icon>
         </View>
       </Layout>
       <View style={{flex: 8}}>

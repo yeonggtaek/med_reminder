@@ -5,9 +5,8 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { default as colorTheme } from '../custom-theme.json';
 import { default as mapping } from "../mapping.json"
 import { useFonts } from 'expo-font';
-import { SafeAreaView, Text } from 'react-native';
+import { Image, SafeAreaView, Text } from 'react-native';
 import { MainNavigator } from "@/app/navigators/mainnavigator.component"
-import { NavigationContainer } from '@react-navigation/native';
 
 export default () => {
   const [loaded, error] = useFonts({
@@ -18,13 +17,16 @@ export default () => {
     "PublicSans-Bold":require("@/assets/fonts/PublicSans-Bold.ttf"),
     "PublicSans-Regular":require("@/assets/fonts/PublicSans-Regular.ttf"),
     "PublicSans-Semibold":require("@/assets/fonts/PublicSans-SemiBold.ttf"),
+    "PublicSans-Medium":require("@/assets//fonts/PublicSans-Medium.ttf")
   })
 
 
   if(!loaded){
-    return <SafeAreaView>
-      <Text>Loading Fonts...</Text>
-    </SafeAreaView>
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: "center", alignItems: "center", padding: 32}}>
+        <Image style={{maxWidth: "100%"}} source={require("@/assets/graphics/logomark.png")} resizeMode='contain'/>
+      </SafeAreaView>
+    )
   }
   return (
     <>
